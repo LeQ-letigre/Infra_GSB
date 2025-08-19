@@ -33,3 +33,25 @@ lxc_linux = {
     network_bridge = "vmbr0"
     }
 }
+
+vms_linux = {
+    "AD-01" = {
+    vm_id = 111
+    name = "AD-01"
+    cores = 2
+    memory = 4096
+    ipconfig0 = "ip=172.16.0.1/24,gw=172.16.0.254"
+    disk_size = "30G"
+    network_bridge = "vmbr0"
+    }
+
+    "AD-02" = {
+    vm_id = 112
+    name = "AD-02"
+    cores = 2
+    memory = 4096
+    ipconfig0 = "ip=172.16.0.2/24,gw=172.16.0.254"
+    disk_size = "30G"
+    network_bridge = "vmbr0"
+    }
+}

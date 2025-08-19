@@ -4,10 +4,12 @@ variable "proxmox_api_url" {
 
 variable "proxmox_api_token_id" {
   type = string
+  sensitive = true
 }
 
 variable "proxmox_api_token" {
   type = string
+  sensitive = true
 }
 
 variable "target_node" {
@@ -29,6 +31,19 @@ variable "lxc_linux" {
     disk_size = string
     ipconfig0 = string
     gw = string
+    network_bridge = string
+  }))
+  
+}
+
+variable "vms_linux" {
+  type = map(object({
+    vm_id = number
+    name = string
+    cores = number
+    memory = number
+    disk_size = string
+    ipconfig0 = string
     network_bridge = string
   }))
   
