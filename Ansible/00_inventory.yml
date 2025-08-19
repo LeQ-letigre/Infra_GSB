@@ -2,11 +2,11 @@ all:
   children: 
     group1:
       hosts: 
-        AdGuard:
+        Adguard:
          ansible_host: 172.16.0.3
         Uptime_Kuma:
          ansible_host: 172.16.0.4
-        vm3: 
+        GLPI: 
           ansible_host: 172.16.0.5
 
     group2:

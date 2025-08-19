@@ -6,9 +6,9 @@
 
 - name : Install AdGuard
   become: yes
-  hosts: AdGuard
+  hosts: Adguard
   roles:
-    - roles/AdGuard
+    - roles/Adguard
 
 - name : Install Uptime Kuma
   become: yes

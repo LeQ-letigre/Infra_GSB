@@ -1,0 +1,2 @@
+[defaults]
+private_key_file = ~/.ssh/Adguard-ed25519
