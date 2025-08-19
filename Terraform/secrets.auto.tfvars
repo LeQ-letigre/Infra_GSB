@@ -1,0 +1,5 @@
+proxmox_api_url = "https://192.168.1.103:8006/api2/json"
+proxmox_api_token_id = "terraform@pve!tf"
+proxmox_api_token = "66eedd74-3a65-411e-9f50-2106c050bbf4"
+chemin_cttemplate = "NAS:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+target_node = "pve"
