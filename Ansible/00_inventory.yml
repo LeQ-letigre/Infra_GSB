@@ -4,10 +4,13 @@ all:
       hosts: 
         Adguard:
          ansible_host: 172.16.0.3
+         ansibe_ssh_private_key_file: /home/ansible/.ssh/Adguard-ed25519
         Uptime_Kuma:
          ansible_host: 172.16.0.4
         GLPI: 
-          ansible_host: 172.16.0.5
+         ansible_host: 172.16.0.5
+         ansibe_ssh_private_key_file: /home/ansible/.ssh/GLPI-ed25519
+
 
     group2:
       hosts:
