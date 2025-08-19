@@ -1,0 +1,28 @@
+- name: Vérifier présence AdGuard
+  ansible.builtin.stat:
+    path: /opt/AdGuardHome/AdGuardHome
+  register: __adguard_check
+
+- name: Télécharger AdGuard
+  ansible.builtin.get_url:
+    url: https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
+    dest: /tmp/AdguardHome.tar.gz
+    validate_certs: false
+  when: not __adguard_check.stat.exists
+
+- name: Décompresser AdGuard
+  ansible.builtin.unarchive:
+    src: /tmp/AdguardHome.tar.gz
+    dest: /opt
+    remote_src: yes
+  when: not __adguard_check.stat.exists
+
+- name: Installer AdGuard
+  ansible.builtin.command: /opt/AdGuardHome/AdGuardHome -s install
+  when: not __adguard_check.stat.exists
+
+- name: Démarrer AdGuard
+  ansible.builtin.systemd:
+    name: AdGuardHome 
+    state: started
+    enabled: yes

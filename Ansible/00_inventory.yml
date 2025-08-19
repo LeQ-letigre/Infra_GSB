@@ -1,0 +1,15 @@
+all: 
+  children: 
+    group1:
+      hosts: 
+        AdGuard:
+         ansible_host: 172.16.0.3
+        Uptime_Kuma:
+         ansible_host: 172.16.0.4
+        vm3: 
+          ansible_host: 172.16.0.5
+
+    group2:
+      hosts:
+        vm4:
+         ansible_host: 10.10.0.10        
