@@ -31,7 +31,6 @@ resource "proxmox_lxc" "lxc_linux" {
   unprivileged     = true
   nameserver       = "1.1.1.1 8.8.8.8"
 
-
   rootfs {
     storage = "local-lvm"
     size    = each.value.disk_size
