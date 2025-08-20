@@ -1,3 +1,5 @@
+---
+
 - name: Installer Apache, PHP, MariaDB et dépendances
   apt:
     name:
@@ -23,35 +25,51 @@
     state: started
     enabled: yes
 
-- name: Créer la base de données glpi
-  mysql_db:
-    name: glpidb
-    state: present
+- name: Créer l'utilisateur MariaDB 'glpi' avec mot de passe si non présent
+  shell: |
+    mysql -u root <<EOF
+    CREATE USER IF NOT EXISTS 'glpi'@'localhost' IDENTIFIED BY '{{ glpi_db_password }}';
+    GRANT ALL PRIVILEGES ON *.* TO 'glpi'@'localhost' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+    EOF
+  args:
+    executable: /bin/bash
+  register: create_glpi_user
+  changed_when: "'CREATE USER' in create_glpi_user.stdout or 'GRANT' in create_glpi_user.stdout"
 
-- name: Créer l'utilisateur glpi
-  mysql_user:
-    name: glpi
-    password: glpipassword
-    priv: 'glpidb.*:ALL'
+- name: Créer la base de données GLPI
+  community.mysql.mysql_db:
+    name: "{{ glpi_db_name }}"
     state: present
+    login_user: "{{ glpi_db_user }}"
+    login_password: "{{ glpi_db_password }}"
 
 - name: Vérifier si glpi.tgz existe déjà
-  ansible.builtin.stat:
+  stat:
     path: /tmp/glpi.tgz
   register: glpi_tgz_check
 
 - name: Télécharger GLPI
   get_url:
-    url: https://github.com/glpi-project/glpi/releases/latest/download/glpi.tgz
+    url: "{{ glpi_archive_url }}"
     dest: /tmp/glpi.tgz
     mode: '0644'
-  when: not glpi_tgz_check
+    validate_certs: false
+  when: not glpi_tgz_check.stat.exists
 
 - name: Décompresser GLPI
   unarchive:
     src: /tmp/glpi.tgz
     dest: /var/www/html/
     remote_src: yes
+    extra_opts: ["--strip-components=1"]
+  notify: Redémarrer Apache
+
+- name: Supprimer la page d'accueil d'Apache
+  ansible.builtin.file:
+    path: /var/www/html/index.html
+    state: absent
+  notify: Redémarrer Apache
 
 - name: Changer les permissions du dossier GLPI
   file:
@@ -59,9 +77,4 @@
     owner: www-data
     group: www-data
     recurse: yes
-
-- name: Activer Apache et le redémarrer
-  service:
-    name: apache2
-    state: restarted
-    enabled: yes
+  notify: Redémarrer Apache
