@@ -47,14 +47,14 @@
 - name: Vérifier présence du docker compose dans /opt 
   ansible.builtin.stat:
     path: /opt/Uptime_Kuma/docker-compose.yml
-  register: docker-compose_check
+  register: docker_compose_check
 
 - name: Copier le docker-compose
   ansible.builtin.template:
-    src: /Users/administrateur/Library/CloudStorage/OneDrive-m2sformation.com/Proxmox - Scripts/Ansible_InfraGsb/roles/Uptime_Kuma/templates/docker-compose.yml
+    src: /root/Infra_GSB/Ansible/roles/Uptime_Kuma/templates/docker-compose.yml
     dest: /opt/Uptime_Kuma/docker-compose.yml
     remote_src: no
-  when: not docker-compose_check.stat.exists 
+  when: not docker_compose_check.stat.exists 
 
 - name: Lancer le docker-compose
   community.docker.docker_compose_v2:

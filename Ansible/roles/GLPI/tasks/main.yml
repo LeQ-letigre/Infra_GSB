@@ -1,0 +1,67 @@
+- name: Installer Apache, PHP, MariaDB et dépendances
+  apt:
+    name:
+      - apache2
+      - mariadb-server
+      - php
+      - php-mysql
+      - php-xml
+      - php-mbstring
+      - php-curl
+      - php-gd
+      - php-intl
+      - php-zip
+      - unzip
+      - python3-pip
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+- name: Assurer que MariaDB est démarré
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Créer la base de données glpi
+  mysql_db:
+    name: glpidb
+    state: present
+
+- name: Créer l'utilisateur glpi
+  mysql_user:
+    name: glpi
+    password: glpipassword
+    priv: 'glpidb.*:ALL'
+    state: present
+
+- name: Vérifier si glpi.tgz existe déjà
+  ansible.builtin.stat:
+    path: /tmp/glpi.tgz
+  register: glpi_tgz_check
+
+- name: Télécharger GLPI
+  get_url:
+    url: https://github.com/glpi-project/glpi/releases/latest/download/glpi.tgz
+    dest: /tmp/glpi.tgz
+    mode: '0644'
+  when: not glpi_tgz_check
+
+- name: Décompresser GLPI
+  unarchive:
+    src: /tmp/glpi.tgz
+    dest: /var/www/html/
+    remote_src: yes
+
+- name: Changer les permissions du dossier GLPI
+  file:
+    path: /var/www/html/glpi
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Activer Apache et le redémarrer
+  service:
+    name: apache2
+    state: restarted
+    enabled: yes

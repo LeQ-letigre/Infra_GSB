@@ -16,3 +16,8 @@
   roles:
     - roles/Uptime_Kuma
 
+- name : Install GLPI
+  become: yes
+  hosts: GLPI
+  roles:
+    - roles/GLPI

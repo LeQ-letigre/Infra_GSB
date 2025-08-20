@@ -5,15 +5,15 @@ all:
         Adguard:
          ansible_host: 172.16.0.3
          ansible_user: root
-         ansible_ssh_private_key_file: /home/ansible/.ssh/Adguard-ed25519
+         ansible_ssh_private_key_file: /root/.ssh/Adguard-ed25519
         Uptime_Kuma:
          ansible_host: 172.16.0.4
          ansible_user: root
-         ansible_ssh_private_key_file: /home/ansible/.ssh/UptimeKuma-ed25519
+         ansible_ssh_private_key_file: /root/.ssh/UptimeKuma-ed25519
         GLPI: 
          ansible_host: 172.16.0.5
          ansible_user: root
-         ansible_ssh_private_key_file: /home/ansible/.ssh/GLPI-ed25519
+         ansible_ssh_private_key_file: /root/.ssh/GLPI-ed25519
 
 
    # group2:
