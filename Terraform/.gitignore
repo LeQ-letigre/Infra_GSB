@@ -1,7 +1,0 @@
-.terraform/
-.terraform.lock.hcl
-secrets.auto.tfvars
-terraform.tfstate
-terraform.tfstate.backup
-.terraform.tfstate.lock.info
-**/.vscode/
