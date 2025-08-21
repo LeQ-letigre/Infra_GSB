@@ -14,6 +14,7 @@
   become: yes
   hosts: Uptime_Kuma
   roles:
+    - roles/Install_Docker
     - roles/Uptime_Kuma
 
 - name : Install GLPI
