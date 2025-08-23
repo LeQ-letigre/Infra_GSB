@@ -1,80 +1,62 @@
----
-
-- name: Installer Apache, PHP, MariaDB et dépendances
-  apt:
-    name:
-      - apache2
-      - mariadb-server
-      - php
-      - php-mysql
-      - php-xml
-      - php-mbstring
-      - php-curl
-      - php-gd
-      - php-intl
-      - php-zip
-      - unzip
-      - python3-pip
-      - python3-pymysql
-    state: present
-    update_cache: yes
-
-- name: Assurer que MariaDB est démarré
-  service:
-    name: mariadb
-    state: started
-    enabled: yes
-
-- name: Créer l'utilisateur MariaDB 'glpi' avec mot de passe si non présent
-  shell: |
-    mysql -u root <<EOF
-    CREATE USER IF NOT EXISTS 'glpi'@'localhost' IDENTIFIED BY '{{ glpi_db_password }}';
-    GRANT ALL PRIVILEGES ON *.* TO 'glpi'@'localhost' WITH GRANT OPTION;
-    FLUSH PRIVILEGES;
-    EOF
-  args:
-    executable: /bin/bash
-  register: create_glpi_user
-  changed_when: "'CREATE USER' in create_glpi_user.stdout or 'GRANT' in create_glpi_user.stdout"
-
-- name: Créer la base de données GLPI
-  community.mysql.mysql_db:
-    name: "{{ glpi_db_name }}"
-    state: present
-    login_user: "{{ glpi_db_user }}"
-    login_password: "{{ glpi_db_password }}"
-
-- name: Vérifier si glpi.tgz existe déjà
-  stat:
-    path: /tmp/glpi.tgz
-  register: glpi_tgz_check
-
-- name: Télécharger GLPI
-  get_url:
-    url: "{{ glpi_archive_url }}"
-    dest: /tmp/glpi.tgz
-    mode: '0644'
-    validate_certs: false
-  when: not glpi_tgz_check.stat.exists
-
-- name: Décompresser GLPI
-  unarchive:
-    src: /tmp/glpi.tgz
-    dest: /var/www/html/
-    remote_src: yes
-    extra_opts: ["--strip-components=1"]
-  notify: Redémarrer Apache
-
-- name: Supprimer la page d'accueil d'Apache
+- name: Créer les dossiers pour les volumes Docker
   ansible.builtin.file:
-    path: /var/www/html/index.html
-    state: absent
-  notify: Redémarrer Apache
+    path: "{{ item }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  loop:
+    - /opt/glpi/db_data
+    - /opt/glpi/html
 
-- name: Changer les permissions du dossier GLPI
+- name: Créer le réseau Docker pour GLPI
+  community.docker.docker_network:
+    name: glpi_net
+    driver: bridge
+
+- name: Lancer MariaDB pour GLPI 
+  community.docker.docker_container:
+    name: glpi_db 
+    image: mariadb:{{ mariadb_version }}
+    state: started
+    restart_policy: always
+    env:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "glpi"
+      MYSQL_USER: "glpi"
+      MYSQL_PASSWORD: "glpi"
+    volumes:
+      - /opt/glpi/db_data:/var/lib/mysql
+    networks:
+      - name: glpi_net
+
+- name: Lancer GLPI (web)
+  community.docker.docker_container:
+    name: glpi_web
+    image: diouxx/glpi
+    state: started
+    restart_policy: always
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/glpi/html:/var/www/html
+    env:
+      TIMEZONE: Europe/Paris
+    networks:
+      - name: glpi_net
+
+- name: Supprimer le fichier install.php de GLPI
   file:
-    path: /var/www/html/glpi
-    owner: www-data
-    group: www-data
-    recurse: yes
-  notify: Redémarrer Apache
+    path: /opt/glpi/html/install/install.php
+    state: absent
+
+- name: Copier le dump SQL dans la VM GLPI
+  copy:
+    src: files/glpi.sql
+    dest: /opt/glpi/glpi.sql
+
+- name: Injecter la base GLPI via docker exec
+  ansible.builtin.shell: |
+    docker exec -i glpi_db mysql -u glpi -pglpi glpi < /opt/glpi/glpi.sql
+
+

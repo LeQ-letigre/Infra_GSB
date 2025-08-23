@@ -21,4 +21,5 @@
   become: yes
   hosts: GLPI
   roles:
+    - roles/Install_Docker
     - roles/GLPI
