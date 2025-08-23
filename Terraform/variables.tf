@@ -22,6 +22,11 @@ variable "chemin_cttemplate" {
   
 }
 
+variable "chemin_vmwintemplate" {
+  description = "chemin iso vm windows template"
+  type = string
+}
+
 variable "lxc_linux" {
   type = map(object({
     lxc_id = number

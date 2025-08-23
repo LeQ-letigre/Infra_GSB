@@ -23,6 +23,7 @@ resource "proxmox_lxc" "lxc_linux" {
   hostname         = each.value.name
   vmid             = each.value.lxc_id
   ostemplate       = var.chemin_cttemplate
+  ssh_keys         = tls_private_key.lxc_ssh_key[each.key].public_key_openssh
   password         = "Formation13@"
   start            = true
   cores            = each.value.cores
@@ -66,7 +67,7 @@ resource "proxmox_vm_qemu" "vms" {
 
   memory      = each.value.memory
   boot        = "order=scsi0" # has to be the same as the OS disk of the template
-  clone       = "TemplateWindowsServer"
+  clone       = var.chemin_vmwintemplate
   full_clone   = true
   scsihw      = "virtio-scsi-single"
   vm_state    = "running"
