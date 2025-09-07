@@ -39,6 +39,7 @@ variable "win_srv" {
     name = string
     vmid = number
     ipconfig0 = string
+    target_node = string
   }))
   
 }

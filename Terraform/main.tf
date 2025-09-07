@@ -58,7 +58,7 @@ resource "proxmox_vm_qemu" "winsrv" {
   for_each = var.win_srv
 
   name        = each.value.name
-  target_node = "proxmox1"
+  target_node = each.value.target_node
   vmid        = each.value.vmid
 
   clone       = "WinSRV2019"
