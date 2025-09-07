@@ -14,6 +14,9 @@ resource "local_file" "private_key" {
  file_permission = "0600"
 }
 
+# Création des windows server 2019
+
+
 # Création des conteneurs LXC avec les configurations définies dans la variable lxc_linux
 resource "proxmox_lxc" "lxc_linux" {
 
@@ -49,4 +52,62 @@ resource "proxmox_lxc" "lxc_linux" {
     nesting = true
   }
 }
+
+resource "proxmox_vm_qemu" "winsrv" {
+
+  for_each = var.win_srv
+
+  name        = each.value.name
+  target_node = "proxmox1"
+  vmid        = each.value.vmid
+
+  clone       = "WinSRV2019"
+  full_clone  = true
+  onboot      = true
+  agent = 1
+  agent_timeout = 300
+  bios        = "ovmf"
+  scsihw      = "virtio-scsi-single"
+  boot        = "order=scsi0;ide1"
+
+  memory      = 6144
+
+  cpu {
+    cores   = 6
+    sockets = 1
+  }
+
+  # Disque principal SCSI (slot = scsi0)
+  disk {
+    slot    = "scsi0"
+    type    = "disk"
+    storage = "local-lvm"
+    size    = "40G"
+    cache   = "writeback"
+  }
+
+  # Disque Cloud-Init (slot = ide2 ou scsi1 selon ta pratique)
+  disk {
+    slot    = "ide1"
+    type    = "cloudinit"
+    storage = "local-lvm"
+  }
+
+  network {
+    id     = 0
+    model  = "virtio"
+    bridge = "vmbr0"
+  }
+
+  serial {
+      id   = 0
+      type = "socket"
+    }
+
+  ipconfig0  = each.value.ipconfig0
+  nameserver = "8.8.8.8"
+  ciuser     = "Administrateur"
+  cipassword = "Formation13@"
+}
+
 

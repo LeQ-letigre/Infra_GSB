@@ -33,3 +33,17 @@ lxc_linux = {
     network_bridge = "vmbr0"
     }
 }
+
+win_srv = {
+  "WinSRV01" = {
+    name = "WinSRV01"
+    vmid = 201
+    ipconfig0 = "ip=172.16.0.1/24,gw=172.16.0.254"
+    }
+
+  "WinSRV02" = {
+    name = "WinSRV02"
+    vmid = 202
+    ipconfig0 = "ip=172.16.0.2/24,gw=172.16.0.254"
+    }
+}
