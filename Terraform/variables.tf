@@ -33,3 +33,12 @@ variable "lxc_linux" {
   }))
   
 }
+
+variable "win_srv" {
+  type = map(object({
+    name = string
+    vmid = number
+    ipconfig0 = string
+  }))
+  
+}
