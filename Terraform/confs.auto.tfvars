@@ -39,6 +39,7 @@ win_srv = {
     name = "WinSRV01"
     vmid = 201
     ipconfig0 = "ip=172.16.0.1/24,gw=172.16.0.254"
+    dns = "8.8.8.8"
     target_node = "proxmox1"
     }
 
@@ -46,6 +47,7 @@ win_srv = {
     name = "WinSRV02"
     vmid = 202
     ipconfig0 = "ip=172.16.0.2/24,gw=172.16.0.254"
+    dns = "172.16.0.1"
     target_node = "proxmox1"
     }
 }

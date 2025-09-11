@@ -105,7 +105,7 @@ resource "proxmox_vm_qemu" "winsrv" {
     }
 
   ipconfig0  = each.value.ipconfig0
-  nameserver = "8.8.8.8"
+  nameserver = each.value.dns 
   ciuser     = "Administrateur"
   cipassword = "Formation13@"
 }
