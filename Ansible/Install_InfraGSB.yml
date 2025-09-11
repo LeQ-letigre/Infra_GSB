@@ -1,5 +1,5 @@
 - name: Update 
-  hosts: group1
+  hosts: linuxs
   become: yes
   roles: 
     - roles/MAJ  
