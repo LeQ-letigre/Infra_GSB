@@ -58,7 +58,6 @@ resource "proxmox_vm_qemu" "winsrv" {
   for_each = var.win_srv
 
   name        = each.value.name
-  target_node = var.target_node
   vmid        = each.value.vmid
 
   clone       = "WinTemplate"
