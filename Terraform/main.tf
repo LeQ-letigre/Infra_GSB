@@ -68,6 +68,8 @@ resource "proxmox_vm_qemu" "winsrv" {
   bios        = "ovmf"
   scsihw      = "virtio-scsi-single"
   boot        = "order=scsi0;ide1"
+  target_node = var.target_node
+
 
   memory      = 6144
 
