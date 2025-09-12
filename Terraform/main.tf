@@ -60,6 +60,7 @@ resource "proxmox_vm_qemu" "winsrv" {
   name        = each.value.name
   target_node = each.value.target_node
   vmid        = each.value.vmid
+  target
 
   clone       = "WinTemplate"
   full_clone  = true
