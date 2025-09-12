@@ -40,6 +40,8 @@ win_srv = {
     vmid = 201
     ipconfig0 = "ip=172.16.0.1/24,gw=172.16.0.254"
     dns = "8.8.8.8"
+    target_node = var.target_node
+
     }
 
   "WinSRV02" = {
@@ -47,5 +49,7 @@ win_srv = {
     vmid = 202
     ipconfig0 = "ip=172.16.0.2/24,gw=172.16.0.254"
     dns = "172.16.0.1"
+    target_node = var.target_node
+
     }
 }
