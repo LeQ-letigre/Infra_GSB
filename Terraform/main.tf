@@ -61,7 +61,7 @@ resource "proxmox_vm_qemu" "winsrv" {
   target_node = each.value.target_node
   vmid        = each.value.vmid
 
-  clone       = "WinSRV2019"
+  clone       = "WinTemplate"
   full_clone  = true
   onboot      = true
   agent = 1
