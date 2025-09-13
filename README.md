@@ -95,4 +95,4 @@ Infra_GSB/
 
 ## 👨‍💻 Auteurs
 
-Projet réalisé par des tigres et pour des tigres... J'ai nommé Nonow et Le Q
+Projet réalisé par des tigres pour des tigres... J'ai nommé Nonow et Le Q
