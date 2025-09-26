@@ -26,12 +26,17 @@ USER_ROLE="Administrator"
 GITHUB_REPO="https://github.com/LeQ-letigre/Infra_GSB.git"
 
 # 1) Télécharger la backup du win srv 2022
-wget --no-check-certificate -O /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst https://m2shelper.boisloret.fr/scripts/deploy-terransible/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst
-wget --no-check-certificate -O /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst.notes https://m2shelper.boisloret.fr/scripts/deploy-terransible/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst.notes
+if [ ! -f /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst ]; then
+  wget --no-check-certificate -O /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst https://m2shelper.boisloret.fr/scripts/deploy-infra-gsb/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst
+fi
+if [ ! -f /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst.notes ]; then
+  wget --no-check-certificate -O /var/lib/vz/dump/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst.notes https://m2shelper.boisloret.fr/scripts/deploy-infra-gsb/vzdump-qemu-101-2025_09_13-14_41_02.vma.zst.notes
+fi
  
 if qm status 2000 &>/dev/null; then
     qm destroy 2000 --purge
 fi
+
 if pct status 2000 &>/dev/null; then
     pct destroy 2000
 fi
