@@ -160,11 +160,9 @@ echo "TF_TOKEN_SECRET = $TF_TOKEN_SECRET"
 echo "[+] Connexion au conteneur pour déploiement Terraform + Ansible..."
 rm -f ~/.ssh/known_hosts
 
-IP_ADDR="${IP%%/*}"
-
 echo "[+] Vérification que le conteneur est bien en ligne..."
-until ping -c1 -W1 "$IP_ADDR" >/dev/null 2>&1; do
-  echo "⏳ En attente que $IP_ADDR soit en ligne..."
+until ping -c1 -W1 "$IP" >/dev/null 2>&1; do
+  echo "⏳ En attente que $IP soit en ligne..."
   sleep 2
 done
 
@@ -293,7 +291,7 @@ done
 # === 10. Retour dans le conteneur terransible pour Ansible ===
 echo "[+] Connexion au conteneur terransible pour déploiement Ansible..."
 
-ssh -T -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" root@"$IP" <<EOF
+ssh -T -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" root@"$IP_ADDR" <<EOF
 
 #!/bin/bash
 set -e
