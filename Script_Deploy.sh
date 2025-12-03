@@ -116,11 +116,21 @@ while ! ping -c 1 -W 1 "$IP" > /dev/null 2>&1; do
     sleep 1
 done
 
-# === 5. Injection de la clé SSH ===
+# === 5. Installation et configuration SSH ===
+echo "[+] Installation de SSH dans le conteneur..."
+pct exec $CTID -- bash -c "apt update && apt install -y openssh-server"
+pct exec $CTID -- systemctl enable ssh
+pct exec $CTID -- systemctl start ssh
+
 echo "[+] Injection de la clé SSH dans le conteneur..."
 pct exec $CTID -- mkdir -p /root/.ssh
 pct exec $CTID -- bash -c "echo '$PUB_KEY' > /root/.ssh/authorized_keys"
 pct exec $CTID -- chmod 600 /root/.ssh/authorized_keys
+pct exec $CTID -- chmod 700 /root/.ssh
+
+# Attendre que SSH soit prêt
+echo "[+] Attente que SSH soit prêt..."
+sleep 5
 
 # === 6. Authentification Proxmox et création du token ===
 echo "[+] Création du token Terraform sur Proxmox..."
@@ -165,6 +175,13 @@ until ping -c1 -W1 "$IP" >/dev/null 2>&1; do
   echo "⏳ En attente que $IP soit en ligne..."
   sleep 2
 done
+
+echo "[+] Test de connexion SSH..."
+until ssh -o StrictHostKeyChecking=no -o ConnectTimeout=2 -i "$SSH_KEY_PATH" root@"$IP" "exit" >/dev/null 2>&1; do
+  echo "⏳ En attente que SSH soit accessible..."
+  sleep 2
+done
+echo "[✔] Connexion SSH établie avec succès"
 
 ssh -T -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" root@"$IP" <<EOF
 
@@ -291,7 +308,7 @@ done
 # === 10. Retour dans le conteneur terransible pour Ansible ===
 echo "[+] Connexion au conteneur terransible pour déploiement Ansible..."
 
-ssh -T -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" root@"$IP_ADDR" <<EOF
+ssh -T -o StrictHostKeyChecking=no -i "$SSH_KEY_PATH" root@"$IP" <<EOF
 
 #!/bin/bash
 set -e
