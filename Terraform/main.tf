@@ -14,9 +14,6 @@ resource "local_file" "private_key" {
  file_permission = "0600"
 }
 
-# Création des windows server 2019
-
-
 # Création des conteneurs LXC avec les configurations définies dans la variable lxc_linux
 resource "proxmox_virtual_environment_container" "lxc_linux" {
 
