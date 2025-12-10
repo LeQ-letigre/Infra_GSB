@@ -17,6 +17,22 @@
     mode: '0644'
   notify: Redémarrer GLPI
 
+- name: Arrêter les conteneurs GLPI existants
+  community.docker.docker_compose_v2:
+    project_src: /opt/glpi
+    state: absent
+  failed_when: false
+
+- name: Nettoyer tous les réseaux Docker inutilisés (force)
+  ansible.builtin.command: docker network prune -f
+  changed_when: true
+
+- name: Supprimer les volumes GLPI (optionnel - décommentez si reset complet nécessaire)
+  ansible.builtin.command: docker volume rm glpi_db_data glpi_config glpi_files glpi_marketplace glpi_plugins
+  failed_when: false
+  changed_when: false
+  when: false  # Mettre à true pour un reset complet
+
 - name: Lancer GLPI avec docker-compose
   community.docker.docker_compose_v2:
     project_src: /opt/glpi
